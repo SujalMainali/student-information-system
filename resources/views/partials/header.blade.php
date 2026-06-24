@@ -2,7 +2,7 @@
     <div class="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <a href="{{ route('manage') }}" class="group flex items-center gap-3" aria-label="Manage home">
             <span class="grid size-11 place-items-center overflow-hidden rounded-2xl bg-indigo-50 ring-1 ring-indigo-100 transition group-hover:-rotate-3">
-                <img src="{{ asset('favicon.ico') }}" alt="" class="size-7">
+                <img src="{{ asset('admin.jpg') }}" alt="" class="size-7">
             </span>
             <span>
                 <span class="block text-lg font-bold tracking-tight text-slate-950">Manage</span>

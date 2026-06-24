@@ -9,12 +9,27 @@
         <div class="mt-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
             <div class="border-b border-slate-100 pb-6">
                 <p class="text-sm font-semibold uppercase tracking-[0.18em] text-amber-600">Student #{{ $student->id }}</p>
-                <h1 class="mt-2 text-3xl font-bold tracking-tight text-slate-950">Edit student</h1>
+                <div class="mt-2 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <h1 class="text-3xl font-bold tracking-tight text-slate-950">Edit student</h1>
+                    <a href="{{ route('student.courses', $student) }}" class="inline-flex items-center justify-center rounded-xl bg-amber-50 px-4 py-2.5 text-sm font-semibold text-amber-700 transition hover:bg-amber-100">
+                        Manage courses
+                    </a>
+                </div>
                 <p class="mt-2 text-sm leading-6 text-slate-600">Keep this learner's profile accurate and current.</p>
             </div>
 
             <form action="{{ route('student.update', $student) }}" method="POST" class="pt-7">
                 @include('students._form')
+            </form>
+
+            <form
+                id="delete-student-form"
+                action="{{ route('student.destroy', $student) }}"
+                method="POST"
+                onsubmit="return confirm('Delete this student? This action cannot be undone.')"
+            >
+                @csrf
+                @method('DELETE')
             </form>
         </div>
     </div>

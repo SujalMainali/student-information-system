@@ -16,6 +16,16 @@
             <form action="{{ route('course.update', $course) }}" method="POST" class="pt-7">
                 @include('courses._form')
             </form>
+
+            <form
+                id="delete-course-form"
+                action="{{ route('course.destroy', $course) }}"
+                method="POST"
+                onsubmit="return confirm('Delete this course? This action cannot be undone.')"
+            >
+                @csrf
+                @method('DELETE')
+            </form>
         </div>
     </div>
 @endsection

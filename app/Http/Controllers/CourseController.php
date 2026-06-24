@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Course\CreateRequest;
 use App\Models\Course;
-use Illuminate\Http\Request;
 
 class CourseController extends Controller
 {
@@ -16,7 +16,7 @@ class CourseController extends Controller
     {
         $courses = Course::query()
             ->select(['id', 'name', 'credits'])
-            ->orderBy('name')
+            ->orderBy('id')
             ->paginate(self::PAGE_SIZE);
 
         if ($courses->currentPage() > $courses->lastPage()) {
@@ -37,12 +37,9 @@ class CourseController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CreateRequest $request)
     {
-        Course::create($request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'credits' => ['required', 'integer', 'min:1', 'max:30'],
-        ]));
+        Course::create($request->validated());
 
         return redirect()
             ->route('course.index')
@@ -68,12 +65,9 @@ class CourseController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Course $course)
+    public function update(CreateRequest $request, Course $course)
     {
-        $course->update($request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'credits' => ['required', 'integer', 'min:1', 'max:30'],
-        ]));
+        $course->update($request->validated());
 
         return redirect()
             ->route('course.index')
@@ -85,6 +79,10 @@ class CourseController extends Controller
      */
     public function destroy(Course $course)
     {
-        //
+        $course->delete();
+
+        return redirect()
+            ->route('course.index')
+            ->with('success', 'Course deleted successfully.');
     }
 }

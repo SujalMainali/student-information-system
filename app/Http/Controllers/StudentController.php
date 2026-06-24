@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Student\CreateRequest;
+use App\Http\Requests\Student\UpdateCourseRequest;
+use App\Models\Course;
 use App\Models\Student;
-use Illuminate\Http\Request;
 
 class StudentController extends Controller
 {
@@ -16,7 +18,7 @@ class StudentController extends Controller
     {
         $students = Student::query()
             ->select(['id', 'name', 'email', 'dob'])
-            ->orderBy('name')
+            ->orderBy('id')
             ->paginate(self::PAGE_SIZE);
 
         if ($students->currentPage() > $students->lastPage()) {
@@ -37,13 +39,9 @@ class StudentController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CreateRequest $request)
     {
-        Student::create($request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', 'unique:students,email'],
-            'dob' => ['required', 'date', 'before_or_equal:today'],
-        ]));
+        Student::create($request->validated());
 
         return redirect()
             ->route('student.index')
@@ -69,13 +67,9 @@ class StudentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Student $student)
+    public function update(CreateRequest $request, Student $student)
     {
-        $student->update($request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', 'unique:students,email,'.$student->id],
-            'dob' => ['required', 'date', 'before_or_equal:today'],
-        ]));
+        $student->update($request->validated());
 
         return redirect()
             ->route('student.index')
@@ -87,6 +81,57 @@ class StudentController extends Controller
      */
     public function destroy(Student $student)
     {
-        //
+        $student->delete();
+
+        return redirect()
+            ->route('student.index')
+            ->with('success', 'Student deleted successfully.');
+    }
+
+    /**
+     * Display the student's course enrollment checklist.
+     */
+    public function courses(Student $student)
+    {
+        $courses = Course::query()
+            ->select(['id', 'name', 'credits'])
+            ->orderBy('name')
+            ->get();
+
+        $enrolledCourseIds = $student->courses()
+            ->pluck('courses.id')
+            ->all();
+
+        return view('students.courses', compact('student', 'courses', 'enrolledCourseIds'));
+    }
+
+    /**
+     * Update the student's course enrollments.
+     */
+    public function updateCourses(UpdateCourseRequest $request, Student $student)
+    {
+        $selectedCourseIds = collect($request->validated('courses', []))
+            ->map(fn ($courseId) => (int) $courseId)
+            ->unique()
+            ->values();
+
+        $currentCourseIds = $student->courses()
+            ->pluck('courses.id')
+            ->map(fn ($courseId) => (int) $courseId);
+
+        $enrolledAt = now();
+        $syncData = $selectedCourseIds->mapWithKeys(
+            fn (int $courseId) => [
+                $courseId => $currentCourseIds->contains($courseId)
+                    ? []
+                    : ['enrolled_at' => $enrolledAt],
+            ],
+        );
+
+        $student->courses()->sync($syncData->all());
+
+        return redirect()
+            ->route('student.index', $student)
+            ->with('success', 'Student courses updated successfully.');
     }
 }

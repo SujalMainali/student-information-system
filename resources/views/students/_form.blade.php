@@ -58,4 +58,13 @@
     <button type="submit" class="inline-flex items-center justify-center rounded-xl bg-amber-500 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-amber-200 transition hover:bg-amber-600">
         {{ $student->exists ? 'Save changes' : 'Create student' }}
     </button>
+    @if ($student->exists)
+        <button
+            type="submit"
+            form="delete-student-form"
+            class="inline-flex items-center justify-center rounded-xl border border-rose-200 bg-rose-50 px-5 py-3 text-sm font-semibold text-rose-700 transition hover:border-rose-300 hover:bg-rose-100"
+        >
+            Delete
+        </button>
+    @endif
 </div>
