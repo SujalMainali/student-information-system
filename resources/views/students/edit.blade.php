@@ -7,6 +7,10 @@
         <a href="{{ route('student.index') }}" class="text-sm font-semibold text-amber-700 hover:text-amber-900">&larr; Back to students</a>
 
         <div class="mt-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+            <div class="mb-6 flex justify-center sm:justify-start">
+                <x-student-avatar :student="$student" size="lg" />
+            </div>
+
             <div class="border-b border-slate-100 pb-6">
                 <p class="text-sm font-semibold uppercase tracking-[0.18em] text-amber-600">Student #{{ $student->id }}</p>
                 <div class="mt-2 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -18,7 +22,7 @@
                 <p class="mt-2 text-sm leading-6 text-slate-600">Keep this learner's profile accurate and current.</p>
             </div>
 
-            <form action="{{ route('student.update', $student) }}" method="POST" class="pt-7">
+            <form action="{{ route('student.update', $student) }}" method="POST" enctype="multipart/form-data" class="pt-7">
                 @include('students._form')
             </form>
 

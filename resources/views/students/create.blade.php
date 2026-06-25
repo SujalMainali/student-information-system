@@ -13,7 +13,7 @@
                 <p class="mt-2 text-sm leading-6 text-slate-600">Add their essential details to the student directory.</p>
             </div>
 
-            <form action="{{ route('student.store') }}" method="POST" class="pt-7">
+            <form action="{{ route('student.store') }}" enctype="multipart/form-data" method="POST" class="pt-7">
                 @include('students._form', ['student' => new \App\Models\Student()])
             </form>
         </div>

@@ -22,7 +22,12 @@
                 :title="$student->name"
                 :subtitle="$student->email"
                 :edit-url="route('student.edit', $student)"
+                :view-url="route('student.show', $student)"
             >
+                <x-slot:leading>
+                    <x-student-avatar :student="$student" size="sm" />
+                </x-slot:leading>
+
                 <x-slot:meta>
                     <span class="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
                         Born {{ $student->dob->format('M j, Y') }}
