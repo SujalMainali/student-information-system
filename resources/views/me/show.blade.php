@@ -12,9 +12,9 @@
 
                 <div class="relative flex flex-col gap-7 sm:flex-row sm:items-center">
                     <div class="grid size-36 shrink-0 place-items-center overflow-hidden rounded-[2rem] border-4 border-white bg-slate-100 text-slate-400 shadow-md ring-1 ring-white/20">
-                        @if ($user->profileImage?->image_path)
+                        @if ($user->image?->image_path)
                             <img
-                                src="{{ Storage::disk('public')->url($user->profileImage->image_path) }}"
+                                src="{{ Storage::disk('public')->url($user->image->image_path) }}"
                                 alt="{{ $user->name }} profile image"
                                 class="size-full object-cover"
                             >
@@ -74,8 +74,8 @@
                         <div class="p-4">
                             <dt class="text-xs font-semibold uppercase tracking-wide text-slate-400">Profile image</dt>
                             <dd class="mt-1 font-medium text-slate-900">
-                                @if ($user->profileImage)
-                                    Uploaded {{ $user->profileImage->created_at->format('F j, Y') }}
+                                @if ($user->image)
+                                    Uploaded {{ $user->image->created_at->format('F j, Y') }}
                                 @else
                                     No profile image uploaded
                                 @endif

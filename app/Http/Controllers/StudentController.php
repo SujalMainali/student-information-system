@@ -53,10 +53,20 @@ class StudentController extends Controller
     public function store(CreateRequest $request)
     {
         $validatedData = $request->validated();
-        if ($request->hasFile('profile_image')) {
-            $validatedData['profile_image'] = $request->file('profile_image')->store('profile_images', 'public');
+        $student = Student::create(
+            [
+                'name' => $validatedData['name'],
+                'email' => $validatedData['email'],
+                'dob' => $validatedData['dob'],
+            ]
+        );
+
+        if($student->user()->first()?->exists()) {
+            if ($request->hasFile('profile_image')) {
+                $validatedData['profile_image'] = $request->file('profile_image')->store('profile_images', 'public');
+                $student->user()->first()->image()->create(['image_path' => $validatedData['profile_image']]);
+            }
         }
-        $student = Student::create($validatedData);
 
         if($request->expectsJson()) {
             return response()->json([
@@ -106,14 +116,20 @@ class StudentController extends Controller
     public function update(CreateRequest $request, Student $student)
     {
         $validatedData = $request->validated();
-        if ($request->hasFile('profile_image')) {
-            $validatedData['profile_image'] = $request->file('profile_image')->store('profile_images', 'public');
-        }
-
-        if ($student->profile_image && $request->hasFile('profile_image')) {
-            Storage::disk('public')->delete($student->profile_image);
-        }
         $student->update($validatedData);
+
+        if($student->user()->exists()) {
+            if( $request->hasFile('profile_image')){
+                if ($student->user()->first()?->image()->first()?->exists()) {
+                    Storage::disk('public')->delete($student->user()->first()->image()->first()->image_path);
+                }
+                $validatedData['profile_image'] = $request->file('profile_image')->store('profile_images', 'public');
+                $student->user()->first()->image()->updateOrCreate(
+                    [],
+                    ['image_path' => $validatedData['profile_image']]
+                );
+            }
+        }
 
         if($request->expectsJson()) {
             return response()->json([

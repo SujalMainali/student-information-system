@@ -34,7 +34,7 @@ class AuthController extends Controller
 
         if($request->hasFile('profile_image')) {
             $path = $request->file('profile_image')->store('profile_images', 'public');
-            $user->profileImage()->create(['image_path' => $path]);
+            $user->image()->create(['image_path' => $path]);
         }
         $request->session()->regenerate();
 

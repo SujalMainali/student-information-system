@@ -18,10 +18,11 @@ class ProfileController extends Controller
                 'created_at',
             ])
             ->with([
-                'profileImage' => fn ($query) => $query
+                'image' => fn ($query) => $query
                     ->select([
                         'id',
-                        'user_id',
+                        'imageable_id',
+                        'imageable_type',
                         'image_path',
                         'created_at',
                     ]),

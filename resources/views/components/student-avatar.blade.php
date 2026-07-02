@@ -1,5 +1,5 @@
 @props([
-    'profileImage' => null,
+    'image' => null,
     'size' => 'md',
 ])
 
@@ -13,9 +13,9 @@
 @endphp
 
 <div {{ $attributes->class([$sizeClasses, 'grid shrink-0 place-items-center overflow-hidden border-4 border-white bg-slate-100 text-slate-400 shadow-md ring-1 ring-slate-200']) }}>
-    @if ($profileImage)
+    @if ($image)
         <img
-            src="{{ Storage::disk('public')->url($profileImage) }}"
+            src="{{ Storage::disk('public')->url($image) }}"
             alt="Profile image"
             class="size-full object-cover"
         >
