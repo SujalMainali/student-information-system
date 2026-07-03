@@ -37,7 +37,6 @@ return Application::configure(basePath: dirname(__DIR__))
         );
 
         $middleware->alias([
-            'api_token_auth' => App\Http\Middleware\ApiTokenAuth::class,
             'role' => App\Http\Middleware\RoleMiddleware::class,
         ]);
     })

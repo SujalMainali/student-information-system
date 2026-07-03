@@ -8,7 +8,6 @@ use Illuminate\Support\Str;
 
 use App\Http\Requests\LoginRequest;
 use App\Models\User;
-use App\Models\ApiToken;
 
 class ApiController extends Controller
 {
@@ -25,24 +24,32 @@ class ApiController extends Controller
                 ], 401);
         }
 
-        $rawToken = Str::random(64);
-
-        $token = ApiToken::create([
-            'user_id' => $user->id,
-            'name' => $credentials['name'] ?? 'api-client',
-            'token' => hash('sha256', $rawToken),
-        ]);
+        $token = $user->createToken(
+            $request->input('device_name', 'api_client'),
+            ['*']
+        );
 
         return response()->json([
             'message' => 'Login successful.',
             'token_type' => 'Bearer',
-            'access_token' => $rawToken,
+            'access_token' => $token->plainTextToken,
             'user' => [
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
                 'role' => $user->role ?? null,
             ],
+        ], 200);
+    }
+
+    public function logout(Request $request)
+    {
+        $user = $request->user();
+
+       $user->currentAccessToken()->delete();
+
+        return response()->json([
+            'message' => 'Logged out successfully.'
         ], 200);
     }
 }

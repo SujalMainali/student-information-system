@@ -8,8 +8,9 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\StudentController;
 
 Route::post('/login', [ApiController::class, 'login']);
-Route::middleware('api_token_auth')->group(function () {
+Route::post('/logout', [ApiController::class, 'logout'])->middleware('auth:sanctum');
 
+Route::middleware('auth:sanctum')->group(function () {
     Route::middleware('role:admin')->get('/courses', [CourseController::class, 'index'])->name('index');
     Route::middleware('role:admin')->get('/courses/{course}', [CourseController::class, 'show'])->name('show');
     Route::middleware('role:admin')->post('/courses', [CourseController::class, 'store'])->name('store');
