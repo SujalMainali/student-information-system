@@ -7,7 +7,7 @@ use App\Http\Controllers\ApiController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\StudentController;
 
-Route::post('/login', [ApiController::class, 'login']);
+Route::post('/login', [ApiController::class, 'login'])->middleware('throttle:login');
 Route::post('/logout', [ApiController::class, 'logout'])->middleware('auth:sanctum');
 
 Route::middleware('auth:sanctum')->group(function () {
