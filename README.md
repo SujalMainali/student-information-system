@@ -1,96 +1,226 @@
-# Course Management
+# Student Information System (SIS)
 
-A Laravel application for managing courses, students, and student course enrollments from a simple administrative dashboard.
+A Laravel-based Student Information System built with custom API token authentication, role-based authorization, and modular backend features for managing students, courses, enrollments, schedules, and academic records.
 
-## Features
+## Overview
 
-- Course listing with pagination
-- Create, edit, and delete courses
-- Student listing with pagination
-- Create, edit, and delete students
-- Assign courses to students using an enrollment checklist
-- Responsive Blade interface styled with Tailwind CSS
-- Seeded development data for courses, students, and enrollments
+This project is being developed as a scalable Student Information System for educational institutions. The current codebase already includes a working backend foundation with:
 
-## Requirements
+* Custom API token authentication
+* Role-based authorization
+* Student and course management
+* Enrollment relationships
+* API Resources
+* Form Requests
+* Policies
+* Role middleware
 
-- PHP 8.3 or later
-- Composer
-- Node.js and npm
-- A supported database such as MySQL
+The long-term goal is to evolve the application into a complete role-aware SIS with dedicated workflows for administrators, staff, and students.
 
-## Setup
+## Current Features
 
-1. Clone the repository and enter the project directory:
+### Authentication
 
-   ```bash
-   git clone https://github.com/SujalMainali/Laravel---Student-Course-Management-.git
-   cd Laravel---Student-Course-Management-
-   ```
+* Custom API token-based authentication
+* Role-aware access control
+* Middleware-protected API routes
 
-2. Install the PHP dependencies:
+### Core Data Management
 
-   ```bash
-   composer install
-   ```
+* User management
+* Student records
+* Course records
+* Enrollment relationships between students and courses
 
-3. Create the environment file:
+### Authorization
 
-   ```bash
-   cp .env.example .env
-   ```
+* Role-based middleware
+* Policies for model-level access control
+* Controller authorization using the Gate facade
 
-4. Generate the application key:
+### API Structure
 
-   ```bash
-   php artisan key:generate
-   ```
+* REST-style API endpoints
+* API Resources for consistent JSON responses
+* Form Requests for validation
 
-5. Create a valid database for the application using MySQL or another supported database system.
+## Planned Roles
 
-6. Fill in the database configuration in `.env` with the correct database name and credentials:
+The system is designed around three main user roles:
 
-   ```env
-   DB_CONNECTION=mysql
-   DB_HOST=127.0.0.1
-   DB_PORT=3306
-   DB_DATABASE=course_management
-   DB_USERNAME=your_database_user
-   DB_PASSWORD=your_database_password
-   ```
+### Administrator
 
-   The database must already exist before running the migrations.
+Responsible for:
 
-7. Run the migrations and seed the database:
+* Managing users
+* Managing roles
+* Managing courses
+* Assigning staff to courses
+* Approving enrollment requests
+* Viewing schedules
+* Generating reports
 
-   ```bash
-   php artisan migrate --seed
-   ```
+### Staff
 
-8. Install and build the frontend dependencies:
+Responsible for:
 
-   ```bash
-   npm install
-   npm run build
-   ```
+* Managing assigned courses
+* Managing schedules
+* Creating examinations
+* Recording student scores
+* Viewing student progress
+* Handling academic operations
 
-9. Start the application:
+### Student
 
-   ```bash
-   composer run dev
-   ```
+Responsible for:
 
-Open the URL shown by Laravel, usually `http://127.0.0.1:8000`.
+* Browsing available courses
+* Requesting enrollment
+* Viewing timetable
+* Viewing examination results
+* Tracking academic progress
+* Checking enrollment status
 
+## Planned Functional Modules
 
-## Main Routes
+### Authentication and Role Management
 
-| URL | Purpose |
-| --- | --- |
-| `/manage` | Management dashboard |
-| `/courses` | Course listing |
-| `/courses/create` | Create a course |
-| `/students` | Student listing |
-| `/students/create` | Create a student |
-| `/students/{student}/courses` | Manage a student's course enrollments |
+Each user type will have a dedicated login flow:
 
+* `/login` for students
+* `/staff/login` for staff
+* `/admin/login` for administrators
+
+These login flows will authenticate the user, validate the role, and issue API access tokens.
+
+### Course Browsing
+
+Students will have a dedicated course browsing experience separate from the admin course management pages. Course listings will show:
+
+* Course code
+* Course name
+* Credits
+* Available seats
+* Instructor
+* Prerequisites
+* Enrollment action
+
+### Enrollment Workflow
+
+Students will request enrollment rather than enrolling automatically. Requests will move through a review workflow:
+
+* Pending
+* Approved
+* Rejected
+* Cancelled
+
+### Enrollment Validation
+
+Enrollment requests will be validated using business rules such as:
+
+* Minimum and maximum credit limits
+* Duplicate request prevention
+* Existing enrollment checks
+* Prerequisite validation
+* Course capacity checks
+* Enrollment period checks
+* Completed course checks
+
+### Timetable and Class Schedule
+
+The system will maintain structured schedules including:
+
+* Day
+* Time
+* Room
+* Session type
+
+Separate timetable views will be provided for:
+
+* Students
+* Staff
+* Administrators
+
+### Examination Module
+
+Staff will be able to create examinations with:
+
+* Title
+* Date
+* Duration
+* Room
+* Weight
+
+Students will be able to view upcoming examinations.
+
+### Student Scores and Performance
+
+Staff will be able to enter:
+
+* Marks
+* Grades
+* Remarks
+
+Students will be able to view:
+
+* Results
+* Feedback
+* GPA
+* Completed and current credits
+* Passed and failed courses
+* Academic progress
+
+### Audit Logging
+
+Administrative actions will be tracked for accountability, including:
+
+* User action
+* Entity affected
+* Timestamp
+* Change history
+
+## API Direction
+
+The project will continue moving toward a modular API-first structure with separate endpoints for:
+
+* Authentication
+* Student operations
+* Staff operations
+* Administrator operations
+* Dashboards
+* Enrollment requests
+* Schedules
+* Scores
+* Course browsing
+
+## Technology Stack
+
+* Laravel
+* PHP
+* Eloquent ORM
+* Custom API authentication
+* Role middleware
+* Policies
+* Form Requests
+* API Resources
+
+## Project Status
+
+This project is in active development. The current backend foundation is functional and ready for expansion into a complete Student Information System.
+
+## Future Vision
+
+The final system aims to become a well-structured, role-based academic management platform that supports:
+
+* Secure authentication
+* Clean API design
+* Strong authorization
+* Student self-service features
+* Staff academic workflows
+* Administrative oversight
+* Scalable feature expansion
+
+## Notes
+
+This project is being developed progressively, so current functionality will remain stable while new API-based features are added over time.
