@@ -28,7 +28,7 @@ class User extends Authenticatable
 
     const ROLE_ADMIN = 'admin';
     const ROLE_STAFF = 'staff';
-    const ROLE_USER = 'user';
+    const ROLE_STUDENT = 'student';
 
     protected function casts(): array
     {
@@ -48,9 +48,9 @@ class User extends Authenticatable
         return $this->role === self::ROLE_STAFF;
     }
 
-    public function isUser(): bool
+    public function isStudent(): bool
     {
-        return $this->role === self::ROLE_USER;
+        return $this->role === self::ROLE_STUDENT;
     }
 
     public function image() {
