@@ -33,7 +33,7 @@ return Application::configure(basePath: dirname(__DIR__))
         );
 
         $middleware->redirectUsersTo(
-            fn (Request $request) => route('manage')
+            fn (Request $request) => route('dashboard')
         );
 
         $middleware->alias([

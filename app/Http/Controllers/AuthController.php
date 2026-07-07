@@ -14,13 +14,47 @@ class AuthController extends Controller
     {
         return view('auths.login');
     }
-
-    public function showRegisterForm()
+    
+    public function showStudentRegisterForm()
     {
-        return view('auths.register');
+        return view('auths.register', [
+            'role' => User::ROLE_STUDENT,
+            'roleLabel' => 'Student',
+        ]);
     }
 
-    public function register(RegisterRequest $request)
+    public function showStaffRegisterForm()
+    {
+        return view('auths.register', [
+            'role' => User::ROLE_STAFF,
+            'roleLabel' => 'Staff',
+        ]);
+    }
+
+    public function showAdminRegisterForm()
+    {
+        return view('auths.register', [
+            'role' => User::ROLE_ADMIN,
+            'roleLabel' => 'Administrator',
+        ]);
+    }
+
+    public function registerStudent(RegisterRequest $request)
+    {
+        return $this->registerUserWithRole($request, User::ROLE_STUDENT);
+    }
+
+    public function registerStaff(RegisterRequest $request)
+    {
+        return $this->registerUserWithRole($request, User::ROLE_STAFF);
+    }
+
+    public function registerAdmin(RegisterRequest $request)
+    {
+        return $this->registerUserWithRole($request, User::ROLE_ADMIN);
+    }
+
+    private function registerUserWithRole(RegisterRequest $request, string $role)
     {
         // Validate the request data
         $validatedData = $request->validated();
@@ -30,6 +64,7 @@ class AuthController extends Controller
             'name' => $validatedData['name'],
             'email' => $validatedData['email'],
             'password' => bcrypt($validatedData['password']),
+            'role' => $role
         ]);
 
         if($request->hasFile('profile_image')) {
@@ -40,7 +75,7 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        return redirect()->intended('/manage');
+        return redirect()->intended('/');
     }
 
     public function login(LoginRequest $request)

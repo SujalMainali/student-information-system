@@ -5,11 +5,6 @@
 @section('content')
     <section class="mx-auto grid min-h-[58vh] max-w-5xl items-center gap-10 lg:grid-cols-[1fr_0.9fr]">
         <div>
-            <a href="{{ route('manage') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 transition hover:text-indigo-700">
-                <span aria-hidden="true">&larr;</span>
-                Back to Manage
-            </a>
-
             <div class="mt-6">
                 <p class="text-sm font-semibold uppercase tracking-[0.25em] text-indigo-600">Welcome back</p>
                 <h1 class="mt-3 text-4xl font-bold tracking-tight text-slate-950 sm:text-5xl">
