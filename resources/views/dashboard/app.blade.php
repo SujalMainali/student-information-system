@@ -26,47 +26,17 @@
     {{-- Summary Cards --}}
     <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         @if($isAdmin || $isStaff)
-            <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-                <p class="text-sm font-medium text-slate-500">Students</p>
-                <p class="mt-2 text-3xl font-bold text-slate-900">{{ $totalStudents }}</p>
-            </div>
-
-            <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-                <p class="text-sm font-medium text-slate-500">Courses</p>
-                <p class="mt-2 text-3xl font-bold text-slate-900">{{ $totalCourses }}</p>
-            </div>
-
-            <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-                <p class="text-sm font-medium text-slate-500">Enrollments</p>
-                <p class="mt-2 text-3xl font-bold text-slate-900">{{ $totalEnrollments }}</p>
-            </div>
+            <x-dashboard.stat-card label="Students" :value="$totalStudents" tone="indigo" />
+            <x-dashboard.stat-card label="Courses" :value="$totalCourses" tone="emerald" />
+            <x-dashboard.stat-card label="Enrollments" :value="$totalEnrollments" tone="amber" />
         @endif
 
         @if($isStudent)
-            <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-                <p class="text-sm font-medium text-slate-500">Enrolled Courses</p>
-                <p class="mt-2 text-3xl font-bold text-slate-900">{{ $enrolledCourses }}</p>
-            </div>
-
-            <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-                <p class="text-sm font-medium text-slate-500">Current Credits</p>
-                <p class="mt-2 text-3xl font-bold text-slate-900">{{ $currentCredits }}</p>
-            </div>
-
-            <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-                <p class="text-sm font-medium text-slate-500">Upcoming Classes</p>
-                <p class="mt-2 text-3xl font-bold text-slate-900">{{ $upcomingClasses }}</p>
-            </div>
-
-            <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-                <p class="text-sm font-medium text-slate-500">Upcoming Exams</p>
-                <p class="mt-2 text-3xl font-bold text-slate-900">{{ $upcomingExams }}</p>
-            </div>
-
-            <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-                <p class="text-sm font-medium text-slate-500">Pending Requests</p>
-                <p class="mt-2 text-3xl font-bold text-slate-900">{{ $pendingRequests }}</p>
-            </div>
+            <x-dashboard.stat-card label="Enrolled Courses" :value="$enrolledCourses" tone="indigo" />
+            <x-dashboard.stat-card label="Current Credits" :value="$currentCredits" tone="emerald" />
+            <x-dashboard.stat-card label="Upcoming Classes" :value="$upcomingClasses" tone="sky" />
+            <x-dashboard.stat-card label="Upcoming Exams" :value="$upcomingExams" tone="rose" />
+            <x-dashboard.stat-card label="Pending Requests" :value="$pendingRequests" tone="amber" />
         @endif
     </section>
 
@@ -76,32 +46,14 @@
 
         <div class="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             @if($isStudent)
-                <a href="#"
-                   class="inline-flex items-center justify-center rounded-2xl border border-indigo-200 bg-indigo-50 px-4 py-3 text-sm font-semibold text-indigo-700 transition hover:bg-indigo-100">
-                    Browse Courses
-                </a>
-
-                <a href="#"
-                   class="inline-flex items-center justify-center rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-100">
-                    Request Enrollment
-                </a>
-
-                <a href="#"
-                   class="inline-flex items-center justify-center rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm font-semibold text-sky-700 transition hover:bg-sky-100">
-                    View Timetable
-                </a>
-
-                <a href="#"
-                   class="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">
-                    View Results
-                </a>
+                <x-dashboard.action-link label="Browse Courses" href="/courses" variant="indigo" />
+                <x-dashboard.action-link label="Request Enrollment" href="#" variant="emerald" />
+                <x-dashboard.action-link label="View Timetable" href="#" variant="sky" />
+                <x-dashboard.action-link label="View Results" href="#" variant="slate" />
             @endif
 
             @if($isAdmin || $isStaff)
-                <a href="{{ url('/manage') }}"
-                   class="inline-flex items-center justify-center rounded-2xl border border-indigo-600 bg-indigo-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700">
-                    Manage System
-                </a>
+                <x-dashboard.action-link label="Manage System" href="{{ url('/manage') }}" variant="primary" />
             @endif
         </div>
     </section>

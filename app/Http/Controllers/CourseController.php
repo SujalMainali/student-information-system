@@ -15,6 +15,9 @@ class CourseController extends Controller
      */
     public function index()
     {
+
+        $isAdmin = auth()->user()->isAdmin();
+
         $courses = Course::query()
             ->select(['id', 'name', 'credits'])
             ->orderBy('id')
@@ -34,8 +37,7 @@ class CourseController extends Controller
                     'message' => 'Courses retrieved successfully.',
                 ]);
         }
-
-        return view('courses.index', compact('courses'));
+        return view('courses.index', compact('courses','isAdmin'));
     }
 
     /**
@@ -87,6 +89,8 @@ class CourseController extends Controller
      */
     public function show(int $course)
     {
+        $isAdmin = auth()->user()->isAdmin();
+        $isStaff = auth()->user()->isStaff();
         $course = Course::query()
             ->select([
                 'id',
@@ -126,7 +130,7 @@ class CourseController extends Controller
             ], 200);                
         }
 
-        return view('courses.show', compact('course', 'students'));
+        return view('courses.show', compact('course', 'students','isAdmin','isStaff'));
     }
 
     /**

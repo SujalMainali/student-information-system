@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="mx-auto max-w-5xl">
-        <a href="{{ route('manage') }}" class="text-sm font-semibold text-indigo-600 hover:text-indigo-800">&larr; Back to Manage</a>
+        <a href="{{ route('dashboard') }}" class="text-sm font-semibold text-amber-700 hover:text-amber-900">&larr; Back to dashboard</a>    
 
         <section class="mt-6 overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
             <div class="relative bg-slate-950 px-6 py-10 sm:px-10">

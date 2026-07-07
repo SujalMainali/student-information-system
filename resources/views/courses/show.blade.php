@@ -23,10 +23,11 @@
                             </span>
                         </div>
                     </div>
-
-                    <a href="{{ route('course.edit', $course) }}" class="inline-flex shrink-0 items-center justify-center rounded-xl bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:bg-slate-100">
-                        Edit course
-                    </a>
+                    @if($isAdmin)
+                        <a href="{{ route('course.edit', $course) }}" class="inline-flex shrink-0 items-center justify-center rounded-xl bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:bg-slate-100">
+                            Edit course
+                        </a>
+                    @endif
                 </div>
             </div>
 
@@ -104,7 +105,7 @@
 
                     <div class="mt-5 space-y-3">
                         @forelse ($students as $student)
-                            <x-enrolled-student-item :student="$student" />
+                            <x-enrolled-student-item :student="$student" :hasAccess="$isAdmin || $isStaff"/>
                         @empty
                             <div class="rounded-2xl border border-dashed border-slate-300 px-6 py-12 text-center">
                                 <p class="font-semibold text-slate-900">No students enrolled</p>

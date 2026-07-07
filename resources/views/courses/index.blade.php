@@ -5,15 +5,17 @@
 @section('content')
     <div class="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
         <div>
-            <a href="{{ route('manage') }}" class="text-sm font-semibold text-indigo-700 hover:text-indigo-900">&larr; Dashboard</a>
+            <a href="{{ route('dashboard') }}" class="text-sm font-semibold text-indigo-700 hover:text-indigo-900">&larr; Dashboard</a>
             <h1 class="mt-3 text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">Courses</h1>
             <p class="mt-2 text-slate-600">Keep your course catalogue clear and up to date.</p>
         </div>
 
-        <a href="{{ route('course.create') }}" class="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-200 transition hover:bg-indigo-700">
-            <span class="text-lg leading-none">+</span>
-            Add course
-        </a>
+        @if($isAdmin)
+            <a href="{{ route('course.create') }}" class="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-200 transition hover:bg-indigo-700">
+                <span class="text-lg leading-none">+</span>
+                Add course
+            </a>
+        @endif
     </div>
 
     <div class="mt-8 space-y-3">
@@ -21,6 +23,7 @@
             <x-resource-list-item
                 :title="$course->name"
                 :subtitle="'Course #'.$course->id"
+                :isAdmin="$isAdmin"
                 :edit-url="route('course.edit', $course)"
                 :view-url="route('course.show', $course)"
             >

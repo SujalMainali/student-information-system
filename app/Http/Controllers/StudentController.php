@@ -19,7 +19,6 @@ class StudentController extends Controller
      */
     public function index()
     {
-        Gate::authorize('viewAny', Student::class);
         $students = Student::query()
             ->select(['id', 'name', 'email', 'dob'])
             ->orderBy('id')
@@ -49,7 +48,6 @@ class StudentController extends Controller
      */
     public function create()
     {
-        Gate::authorize('create', Student::class);
         return view('students.create');
     }
 
@@ -91,6 +89,7 @@ class StudentController extends Controller
      */
     public function show(Student $student)
     {
+        Gate::authorize('view', $student);
         $student->load([
             'courses' => fn ($query) => $query
                 ->select('courses.id', 'courses.name', 'courses.credits')
@@ -115,8 +114,8 @@ class StudentController extends Controller
      */
     public function edit(Student $student)
     {
-        Gate::authorize('update', $student);
-        return view('students.edit', compact('student'));
+        $isAdmin = auth()->user()->isAdmin();
+        return view('students.edit', compact('student','isAdmin'));
     }
 
     /**
