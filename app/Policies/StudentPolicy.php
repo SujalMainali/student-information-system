@@ -37,7 +37,7 @@ class StudentPolicy
      */
     public function update(User $user, Student $student): bool
     {
-        return $user->student()->first()?->id === $student->id || $user->isAdmin() || $user->isStaff();
+        return $user->student()->first()?->id === $student->id || $user->isAdmin();
     }
 
     /**
