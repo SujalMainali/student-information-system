@@ -47,6 +47,7 @@
         <div class="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             @if($isStudent)
                 <x-dashboard.action-link label="Browse Courses" href="/courses" variant="indigo" />
+                <x-dashboard.action-link label="My Courses" href="/me/courses" variant="slate" />
                 <x-dashboard.action-link label="Request Enrollment" href="#" variant="emerald" />
                 <x-dashboard.action-link label="View Timetable" href="#" variant="sky" />
                 <x-dashboard.action-link label="View Results" href="#" variant="slate" />

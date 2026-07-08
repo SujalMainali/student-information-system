@@ -20,19 +20,11 @@
 
     <div class="mt-8 space-y-3">
         @forelse ($courses as $course)
-            <x-resource-list-item
-                :title="$course->name"
-                :subtitle="'Course #'.$course->id"
-                :isAdmin="$isAdmin"
-                :edit-url="route('course.edit', $course)"
-                :view-url="route('course.show', $course)"
-            >
-                <x-slot:meta>
-                    <span class="rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700">
-                        {{ $course->credits }} {{ Str::plural('credit', $course->credits) }}
-                    </span>
-                </x-slot:meta>
-            </x-resource-list-item>
+            <x-course.resource-list-item
+                :course="$course"
+                :is-admin="$isAdmin"
+                :show-enroll="auth()->user()->isStudent()"
+            />
         @empty
             <div class="rounded-3xl border border-dashed border-slate-300 bg-white px-6 py-16 text-center">
                 <p class="text-lg font-semibold text-slate-900">No courses yet</p>

@@ -10,6 +10,8 @@ Route::get('/manage', function () {
     return view('manage');
 })->middleware(['web', 'auth','role:admin,staff'])->name('manage');
 
-Route::get('/me', [UserController::class, 'show'])
-    ->middleware(['web', 'auth'])
-    ->name('me.show');
+Route::middleware(['web', 'auth'])->group(function () {
+    Route::get('/me', [UserController::class, 'show'])->name('me.show');
+    Route::get('/me/courses', [UserController::class, 'get_courses'])->name('me.courses');
+});
+
