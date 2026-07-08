@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 use App\Models\CourseDocument;
+use App\Models\EnrollmentRequest;
 
 #[Fillable(['name', 'credits'])]
 #[Hidden(['created_at', 'updated_at'])]
@@ -34,5 +35,10 @@ class Course extends Model
 
     public function image() {
         return $this->morphOne(Image::class, 'imageable');
+    }
+
+    public function enrollmentRequests(): HasMany
+    {
+        return $this->hasMany(EnrollmentRequest::class);
     }
 }

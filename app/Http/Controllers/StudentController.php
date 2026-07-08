@@ -114,6 +114,7 @@ class StudentController extends Controller
      */
     public function edit(Student $student)
     {
+        Gate::authorize('update', $student);
         $isAdmin = auth()->user()->isAdmin();
         return view('students.edit', compact('student','isAdmin'));
     }
@@ -123,6 +124,7 @@ class StudentController extends Controller
      */
     public function update(CreateRequest $request, Student $student)
     {
+        Gate::authorize('update', $student);
         $validatedData = $request->validated();
         $student->update($validatedData);
 

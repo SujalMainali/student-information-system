@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 
-class ProfileController extends Controller
+class UserController extends Controller
 {
     public function show(Request $request)
     {
@@ -30,5 +30,18 @@ class ProfileController extends Controller
             ->findOrFail($request->user()->id);
 
         return view('me.show', compact('user'));
+    }
+
+    public function get_courses(Request $request)
+    {
+        $user = $request->user();
+
+        if ($user->isStudent()) {
+            $courses = $user->student->courses()->get();
+        } else {
+            $courses = collect(); // Empty collection for admin or other roles
+        }
+
+        return view('me.courses', compact('courses'));
     }
 }

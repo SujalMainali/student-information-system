@@ -13,6 +13,8 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
+use App\Models\EnrollmentRequest;
+
 #[Fillable(['name', 'email', 'password','role'])]
 #[Hidden(['password', 'remember_token', 'created_at', 'updated_at', 'email_verified_at'])]
 #[Visible(['id', 'name', 'email', 'role'])]
@@ -61,5 +63,10 @@ class User extends Authenticatable
     public function student(): HasOne
     {
         return $this->hasOne(Student::class, 'email', 'email');
+    }
+
+    public function enrollmentRequests()
+    {
+        return $this->hasMany(EnrollmentRequest::class);
     }
 }
