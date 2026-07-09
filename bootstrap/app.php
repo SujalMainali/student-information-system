@@ -5,6 +5,8 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Spatie\Permission\Middleware\PermissionMiddleware;
+use Spatie\Permission\Middleware\RoleOrPermissionMiddleware;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -25,6 +27,10 @@ return Application::configure(basePath: dirname(__DIR__))
                 ->name('auth.')
                 ->prefix('auth')
                 ->group(base_path('routes/auth.php'));
+            Route::middleware(['web', 'auth'])
+                ->name('notification.')
+                ->prefix('notification')
+                ->group(base_path('routes/notification.php'));
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
@@ -38,8 +44,8 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'role' => App\Http\Middleware\RoleMiddleware::class,
-            'permission' => App\Http\Middleware\PermissionMiddleware::class,
-            'role_or_permission' => App\Http\Middleware\RoleOrPermissionMiddleware::class,
+            'permission' => PermissionMiddleware::class,
+            'role_or_permission' => RoleOrPermissionMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
