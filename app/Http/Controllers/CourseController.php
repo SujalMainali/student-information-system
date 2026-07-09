@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Course\CreateRequest;
 use App\Models\Course;
 use App\Http\Resources\CourseResource;
+use App\Jobs\SendEnrollNotifications;
 
 class CourseController extends Controller
 {
@@ -211,10 +212,12 @@ class CourseController extends Controller
                 ->with('error', 'You are already enrolled in this course.');
         }
 
-        $user->student->enrollmentRequests()->create([
+        $enrollRequest = $user->student->enrollmentRequests()->create([
             'course_id' => $course->id,
             'status' => 'pending',
         ]);
+
+        SendEnrollNotifications::dispatch($enrollRequest);
 
         if(request()->expectsJson()) {
             return response()->json([

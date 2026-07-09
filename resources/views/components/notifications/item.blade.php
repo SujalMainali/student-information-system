@@ -1,4 +1,5 @@
 @props([
+    'id' => null,
     'title' => 'Notification title',
     'message' => 'Notification message',
     'href' => '#',
@@ -13,8 +14,7 @@
         : 'bg-white hover:bg-slate-50';
 @endphp
 
-<a href="{{ $href }}"
-   class="block rounded-2xl border border-slate-200 p-4 transition {{ $baseClasses }}">
+<div class="rounded-2xl border border-slate-200 p-4 transition {{ $baseClasses }}">
     <div class="flex gap-3">
         <div class="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full {{ $unread ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-500' }}">
             <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -27,6 +27,7 @@
                 <p class="text-sm font-semibold text-slate-900">
                     {{ $title }}
                 </p>
+
                 <span class="shrink-0 text-xs font-medium text-slate-500">
                     {{ $time }}
                 </span>
@@ -35,6 +36,34 @@
             <p class="mt-1 text-sm leading-6 text-slate-600">
                 {{ $message }}
             </p>
+
+            <div class="mt-4 flex items-center justify-end gap-2 border-t border-slate-200 pt-3">
+
+                <a
+                    href="{{ route('notification.show', $id) }}"
+                    class="inline-flex items-center rounded-xl bg-indigo-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-indigo-700"
+                >
+                    View
+                </a>
+
+                @if($unread)
+                    <form
+                        method="POST"
+                        action="{{ route('notification.read', $id) }}"
+                    >
+                        @csrf
+                        @method('PATCH')
+
+                        <button
+                            type="submit"
+                            class="inline-flex items-center rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-100"
+                        >
+                            Mark as read
+                        </button>
+                    </form>
+                @endif
+
+            </div>
         </div>
     </div>
-</a>
+</div>

@@ -60,12 +60,14 @@ class AuthController extends Controller
 
     public function registerStaff(RegisterRequest $request)
     {
-        return $this->registerUserWithRole($request, User::ROLE_STAFF);
+        $user = $this->registerUserWithRole($request, User::ROLE_STAFF);
+        return redirect()->intended('/');
     }
 
     public function registerAdmin(RegisterRequest $request)
     {
-        return $this->registerUserWithRole($request, User::ROLE_ADMIN);
+        $user = $this->registerUserWithRole($request, User::ROLE_ADMIN);
+        return redirect()->intended('/');
     }
 
     private function registerUserWithRole(RegisterRequest $request, string $role)

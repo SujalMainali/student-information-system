@@ -22,6 +22,20 @@ class DashboardController extends Controller
 
         $greeting = $this->getGreeting();
 
+        $notifications = $user->notifications()->latest()->take(4)->get()
+            ->map(function ($notification) {
+                return [
+                    'id' => $notification->id,
+                    'title' => $notification->data['title'] ?? 'Notification',
+                    'message' => $notification->data['message'] ?? 'No message available',
+                    'href' => $notification->data['url'] ?? '#',
+                    'time' => $notification->created_at->diffForHumans(),
+                    'unread' => is_null($notification->read_at),
+                ];
+            });
+
+        $unreadCount = $user->unreadNotifications()->count();
+
         $data = [
             'userName' => $user->name,
             'roleLabel' => $roleLabel,
@@ -56,6 +70,10 @@ class DashboardController extends Controller
                 $data['pendingRequests'] = 0;
             }
         }
+
+        $data['notifications'] = $notifications;    
+        $data['unreadCount'] = $unreadCount;
+
 
         return view('dashboard.app', $data);
     }

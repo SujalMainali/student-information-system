@@ -20,9 +20,9 @@
     <div class="max-h-[24rem] overflow-y-auto p-3">
         @forelse($items as $notification)
             <x-notifications.item
+                :id="$notification['id'] ?? null"
                 :title="$notification['title'] ?? 'Notification'"
                 :message="$notification['message'] ?? ''"
-                :href="$notification['href'] ?? '#'"
                 :time="$notification['time'] ?? 'just now'"
                 :unread="$notification['unread'] ?? false"
             />
