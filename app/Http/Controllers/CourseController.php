@@ -192,4 +192,38 @@ class CourseController extends Controller
             ->route('course.index')
             ->with('success', 'Course deleted successfully.');
     }
+
+    public function enroll(Course $course)
+    {
+        $user = auth()->user();
+
+        $user_courses = $user->student->courses()->pluck('courses.id')->toArray();
+
+        if (in_array($course->id, $user_courses)) {
+            if(request()->expectsJson()) {
+                return response()->json([
+                    'message' => 'You are already enrolled in this course.',
+                ], 400);
+            }
+
+            return redirect()
+                ->route('course.show', $course)
+                ->with('error', 'You are already enrolled in this course.');
+        }
+
+        $user->student->enrollmentRequests()->create([
+            'course_id' => $course->id,
+            'status' => 'pending',
+        ]);
+
+        if(request()->expectsJson()) {
+            return response()->json([
+                'message' => 'Enrollment Request sent successfully.',
+            ], 200);
+        }
+
+        return redirect()
+            ->route('course.show', $course)
+            ->with('success', 'Enrollment Request sent successfully.');
+    }
 }

@@ -42,11 +42,12 @@ class DashboardController extends Controller
 
             if ($student) {
                 $enrolledCourses = $student->courses()->get();
+                $entollmentRequests = $student->enrollmentRequests()->get();
                 $data['enrolledCourses'] = $enrolledCourses->count();
                 $data['currentCredits'] = (int) $enrolledCourses->sum('credits');
                 $data['upcomingClasses'] = $enrolledCourses->count();
                 $data['upcomingExams'] = 0;
-                $data['pendingRequests'] = 0;
+                $data['pendingRequests'] = $entollmentRequests->count();
             } else {
                 $data['enrolledCourses'] = 0;
                 $data['currentCredits'] = 0;

@@ -10,3 +10,4 @@ Route::get('/courses/{course}', [CourseController::class, 'show'])->name('show')
 Route::get('/courses/{course}/edit', [CourseController::class, 'edit'])->middleware('role:admin')->name('edit');
 Route::put('/courses/{course}', [CourseController::class, 'update'])->middleware('role:admin')->name('update');
 Route::delete('/courses/{course}', [CourseController::class, 'destroy'])->middleware('role:admin')->name('destroy');
+Route::post('/courses/{course}/enroll', [CourseController::class, 'enroll'])->middleware('role:student')->name('enroll');

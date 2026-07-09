@@ -6,6 +6,7 @@ namespace App\Models;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Attributes\Visible;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -63,10 +64,5 @@ class User extends Authenticatable
     public function student(): HasOne
     {
         return $this->hasOne(Student::class, 'email', 'email');
-    }
-
-    public function enrollmentRequests()
-    {
-        return $this->hasMany(EnrollmentRequest::class);
     }
 }

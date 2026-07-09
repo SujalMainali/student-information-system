@@ -41,9 +41,20 @@ class AuthController extends Controller
         ]);
     }
 
+    //TODO: make the dob filled from the user table by adding dob to users table
     public function registerStudent(RegisterRequest $request)
     {
-        return $this->registerUserWithRole($request, User::ROLE_STUDENT);
+        $user = $this->registerUserWithRole($request, User::ROLE_STUDENT);
+
+        if ($user->isStudent()) {
+            $user->student()->create([
+                'name' => $user->name,
+                'email' => $user->email,
+                'dob' => now()->subYears(18)->toDateString(), // Set default DOB to 18 years ago
+                'profile_image' => null, // Set default profile image to null
+            ]);
+        }
+        return redirect()->intended('/');
     }
 
     public function registerStaff(RegisterRequest $request)
@@ -79,7 +90,7 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        return redirect()->intended('/');
+        return $user;
     }
 
     public function login(LoginRequest $request)

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('enrollment_requests', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('student_id')->constrained('students')->onDelete('cascade');
             $table->foreignId('course_id')->constrained('courses')->onDelete('cascade');
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->foreignId('reviewedBy')->nullable()->constrained('users')->onDelete('set null');
