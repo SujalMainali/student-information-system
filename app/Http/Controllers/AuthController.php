@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\WelcomeUser;
+use App\Jobs\SendWelcomeEmail;
 
 class AuthController extends Controller
 {
@@ -85,7 +86,7 @@ class AuthController extends Controller
             $user->image()->create(['image_path' => $path]);
         }
 
-        Mail::to($user->email)->send(new WelcomeUser($user));
+        SendWelcomeEmail::dispatch($user);
         $request->session()->regenerate();
 
         Auth::login($user);
