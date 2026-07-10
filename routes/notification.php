@@ -5,8 +5,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
-})->name('index');
+})->middleware('permission:notifications.view')->name('index'); 
 
-Route::get('/{notification}', [NotificationController::class, 'show'])->name('show');
+Route::get('/{notification}', [NotificationController::class, 'show'])->middleware('permission:notifications.view')->name('show');
 
-Route::patch('{notification}/read', [NotificationController::class, 'markAsRead'])->name('read');
+Route::patch('{notification}/read', [NotificationController::class, 'markAsRead'])->middleware('permission:notifications.mark-read')->name('read');

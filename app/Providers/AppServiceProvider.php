@@ -2,10 +2,14 @@
 
 namespace App\Providers;
 
+use App\Policies\NotificationPolicy;
+
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Support\Facades\Gate;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,6 +26,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Gate::policy(DatabaseNotification::class, NotificationPolicy::class);
+
         RateLimiter::for('login', function (Request $request) {
             $email = strtolower((string) $request->input('email'));
 

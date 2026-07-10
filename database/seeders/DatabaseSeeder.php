@@ -7,6 +7,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 use Database\Seeders\CourseStudentSeeder;
+use Database\Seeders\RolePermissionSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -19,6 +20,10 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             CourseStudentSeeder::class,
+        ]);
+
+        $this->call([
+            RolePermissionSeeder::class,
         ]);
     }
 }
