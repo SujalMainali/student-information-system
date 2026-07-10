@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+
 use App\Http\Requests\Course\CreateRequest;
 use App\Models\Course;
 use App\Http\Resources\CourseResource;
@@ -56,22 +59,26 @@ class CourseController extends Controller
     {
         $validated = $request->validated();
 
-        $course = Course::create([
-            'name' => $validated['name'],
-            'credits' => $validated['credits'],
-        ]);
+        $course = DB::transaction(function () use ($validated, $request) {
+            $course = Course::create([
+                'name' => $validated['name'],
+                'credits' => $validated['credits'],
+            ]);
 
-        if ($request->hasFile('documents')) {
-            $documents = collect($request->file('documents'))
-                ->map(function ($document) {
-                    return [
-                        'path' => $document->store('course_documents', 'public'),
-                        'original_name' => $document->getClientOriginalName(),
-                    ];
-                });
+            if ($request->hasFile('documents')) {
+                $documents = collect($request->file('documents'))
+                    ->map(function ($document) {
+                        return [
+                            'path' => $document->store('course_documents', 'public'),
+                            'original_name' => $document->getClientOriginalName(),
+                        ];
+                    });
 
-            $course->courseDocuments()->createMany($documents->all());
-        }
+                $course->courseDocuments()->createMany($documents->all());
+            }
+
+            return $course;
+        });
 
         if($request->expectsJson()) {
             return response()->json([
@@ -149,22 +156,26 @@ class CourseController extends Controller
     {
         $validated = $request->validated();
 
-        $course->update([
-            'name' => $validated['name'],
-            'credits' => $validated['credits'],
-        ]);
+        $course = DB::transaction(function () use ($validated, $request, $course) {
+            $course->update([
+                'name' => $validated['name'],
+                'credits' => $validated['credits'],
+            ]);
 
-        if ($request->hasFile('documents')) {
-            $documents = collect($request->file('documents'))
-                ->map(function ($document) {
-                    return [
-                        'path' => $document->store('course_documents', 'public'),
-                        'original_name' => $document->getClientOriginalName(),
-                    ];
-                });
+            if ($request->hasFile('documents')) {
+                $documents = collect($request->file('documents'))
+                    ->map(function ($document) {
+                        return [
+                            'path' => $document->store('course_documents', 'public'),
+                            'original_name' => $document->getClientOriginalName(),
+                        ];
+                    });
 
-            $course->courseDocuments()->createMany($documents->all());
-        }
+                $course->courseDocuments()->createMany($documents->all());
+            }
+
+            return $course;
+        });
 
         if($request->expectsJson()) {
             return response()->json([
@@ -183,7 +194,16 @@ class CourseController extends Controller
      */
     public function destroy(Course $course)
     {
-        $course->delete();
+
+        DB::transaction(function () use ($course) {
+            // Delete the associated course documents if they exist
+            if ($course->courseDocuments()->exists()) {
+                foreach ($course->courseDocuments as $document) {
+                    Storage::disk('public')->delete($document->path);
+                }
+            }
+            $course->delete();
+        });
 
         if(request()->expectsJson()) {
             return response()->noContent();

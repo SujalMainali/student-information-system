@@ -9,6 +9,7 @@ use App\Models\Student;
 use App\Http\Resources\StudentResource;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\DB;
 
 class StudentController extends Controller
 {
@@ -57,20 +58,25 @@ class StudentController extends Controller
     public function store(CreateRequest $request)
     {
         $validatedData = $request->validated();
-        $student = Student::create(
-            [
-                'name' => $validatedData['name'],
-                'email' => $validatedData['email'],
-                'dob' => $validatedData['dob'],
-            ]
-        );
 
-        if($student->user()->first()?->exists()) {
-            if ($request->hasFile('profile_image')) {
-                $validatedData['profile_image'] = $request->file('profile_image')->store('profile_images', 'public');
-                $student->user()->first()->image()->create(['image_path' => $validatedData['profile_image']]);
+        $student = DB::transaction(function () use ($validatedData, $request) {
+            $student = Student::create(
+                [
+                    'name' => $validatedData['name'],
+                    'email' => $validatedData['email'],
+                    'dob' => $validatedData['dob'],
+                ]
+            );
+
+            if($student->user()->first()?->exists()) {
+                if ($request->hasFile('profile_image')) {
+                    $validatedData['profile_image'] = $request->file('profile_image')->store('profile_images', 'public');
+                    $student->user()->first()->image()->create(['image_path' => $validatedData['profile_image']]);
+                }
             }
-        }
+
+            return $student;
+        });
 
         if($request->expectsJson()) {
             return response()->json([
@@ -126,20 +132,35 @@ class StudentController extends Controller
     {
         Gate::authorize('update', $student);
         $validatedData = $request->validated();
-        $student->update($validatedData);
 
-        if($student->user()->exists()) {
-            if( $request->hasFile('profile_image')){
-                if ($student->user()->first()?->image()->first()?->exists()) {
-                    Storage::disk('public')->delete($student->user()->first()->image()->first()->image_path);
+        $student = DB::transaction(function () use ($validatedData, $request, $student) {
+            $student->update($validatedData);
+
+            // Use dynamic properties ($student->user) to avoid redundant database queries
+            $user = $student->user;
+
+            if ($user && $request->hasFile('profile_image')) {
+                
+                // Load the image relationship once
+                $oldImage = $user->image; 
+
+                // If an old file exists on the disk, delete it
+                if ($oldImage && Storage::disk('public')->exists($oldImage->image_path)) {
+                    Storage::disk('public')->delete($oldImage->image_path);
                 }
-                $validatedData['profile_image'] = $request->file('profile_image')->store('profile_images', 'public');
-                $student->user()->first()->image()->updateOrCreate(
-                    [],
-                    ['image_path' => $validatedData['profile_image']]
+
+                // Store the new file
+                $newPath = $request->file('profile_image')->store('profile_images', 'public');
+
+                // Update the path in the DB or create a new row if it didn't exist
+                $user->image()->updateOrCreate(
+                    [], // Empty array means "match anything associated to this user"
+                    ['image_path' => $newPath]
                 );
             }
-        }
+
+            return $student;
+        });
 
         if($request->expectsJson()) {
             return response()->json([
@@ -160,10 +181,13 @@ class StudentController extends Controller
     {
         Gate::authorize('delete', $student);
 
-        if ($student->profile_image) {
-            Storage::disk('public')->delete($student->profile_image);
-        }
-        $student->delete();
+        DB::transaction(function () use ($student) {
+            // Delete the associated profile image if it exists
+            if ($student->profile_image) {
+                Storage::disk('public')->delete($student->profile_image);
+            }
+            $student->delete();
+        });
 
         if(request()->expectsJson()) {
             return response()->noContent();

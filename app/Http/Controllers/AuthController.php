@@ -7,7 +7,7 @@ use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\DB;
 use App\Mail\WelcomeUser;
 use App\Jobs\SendWelcomeEmail;
 
@@ -45,55 +45,59 @@ class AuthController extends Controller
     //TODO: make the dob filled from the user table by adding dob to users table
     public function registerStudent(RegisterRequest $request)
     {
-        $user = $this->registerUserWithRole($request, User::ROLE_STUDENT);
-
-        if ($user->isStudent()) {
-            $user->student()->create([
-                'name' => $user->name,
-                'email' => $user->email,
-                'dob' => now()->subYears(18)->toDateString(), // Set default DOB to 18 years ago
-                'profile_image' => null, // Set default profile image to null
-            ]);
-        }
+        $this->registerUserWithRole($request, User::ROLE_STUDENT);
         return redirect()->intended('/');
     }
 
     public function registerStaff(RegisterRequest $request)
     {
-        $user = $this->registerUserWithRole($request, User::ROLE_STAFF);
+        $this->registerUserWithRole($request, User::ROLE_STAFF);
         return redirect()->intended('/');
     }
 
     public function registerAdmin(RegisterRequest $request)
     {
-        $user = $this->registerUserWithRole($request, User::ROLE_ADMIN);
+        $this->registerUserWithRole($request, User::ROLE_ADMIN);
         return redirect()->intended('/');
     }
 
     private function registerUserWithRole(RegisterRequest $request, string $role)
     {
+        $user = null; // Initialize the $user variable
         // Validate the request data
         $validatedData = $request->validated();
 
-        // Create a new user
-        $user = User::create([
-            'name' => $validatedData['name'],
-            'email' => $validatedData['email'],
-            'password' => bcrypt($validatedData['password']),
-            'role' => $role
-        ]);
+        DB::transaction( function () use ($validatedData, $role, $request) {
+            // Create a new user
+            $user = User::create([
+                'name' => $validatedData['name'],
+                'email' => $validatedData['email'],
+                'password' => bcrypt($validatedData['password']),
+                'role' => $role
+            ]);
 
-        if($request->hasFile('profile_image')) {
-            $path = $request->file('profile_image')->store('profile_images', 'public');
-            $user->image()->create(['image_path' => $path]);
-        }
+            if($request->hasFile('profile_image')) {
+                $path = $request->file('profile_image')->store('profile_images', 'public');
+                $user->image()->create(['image_path' => $path]);
+            }
 
-        SendWelcomeEmail::dispatch($user);
-        $request->session()->regenerate();
+            if ($user->isStudent()) {
+                $user->student()->create([
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'dob' => now()->subYears(18)->toDateString(), // Set default DOB to 18 years ago
+                    'profile_image' => null, // Set default profile image to null
+                ]);
+            }
 
-        Auth::login($user);
+            SendWelcomeEmail::dispatch($user);
 
-        return $user;
+            $request->session()->regenerate();
+
+            Auth::login($user);
+
+            return $user;
+        });
     }
 
     public function login(LoginRequest $request)
