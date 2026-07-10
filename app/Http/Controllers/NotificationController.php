@@ -10,9 +10,14 @@ class NotificationController extends Controller
 {
     public function index()
     {
-        $notifications = auth()->user()->notifications->paginate(10);
+        $pageNotifications = auth()->user()->notifications()->paginate(10);
 
-        return view('notifications.index', compact('notifications'));
+        return view('notifications.index', compact('pageNotifications'));
+    }
+
+    public function show(DatabaseNotification $notification)
+    {
+        return view('notifications.show', compact('notification'));
     }
 
     public function markAsRead(DatabaseNotification $notification)
@@ -25,5 +30,16 @@ class NotificationController extends Controller
         }
 
         return redirect()->back()->with('success', 'Notification marked as read.');
+    }
+
+    public function markAllRead()
+    {
+        auth()->user()->unreadNotifications->markAsRead();
+
+        if (request()->expectsJson()) {
+            return response()->json(['message' => 'All notifications marked as read.']);
+        }
+
+        return redirect()->back()->with('success', 'All notifications marked as read.');
     }
 }

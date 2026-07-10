@@ -3,10 +3,15 @@ use App\Http\Controllers\NotificationController;
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-})->middleware('permission:notifications.view')->name('index'); 
+Route::middleware('permission:notifications.view')->group(function () {
+    Route::get('/', [NotificationController::class, 'index'])->name('index');
+    Route::get('/{notification}', [NotificationController::class, 'show'])->name('show');
+});
 
-Route::get('/{notification}', [NotificationController::class, 'show'])->middleware('permission:notifications.view')->name('show');
+Route::middleware('permission:notifications.mark-read')->group(function () {
+    Route::patch('{notification}/read', [NotificationController::class, 'markAsRead'])->name('read');
+});
 
-Route::patch('{notification}/read', [NotificationController::class, 'markAsRead'])->middleware('permission:notifications.mark-read')->name('read');
+Route::middleware('permission:notifications.mark-all-read')->group(function () {
+    Route::patch('/read-all', [NotificationController::class, 'markAllRead'])->name('read-all');
+});

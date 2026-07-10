@@ -22,15 +22,13 @@ class DashboardController extends Controller
 
         $greeting = $this->getGreeting();
 
-        $notifications = $user->notifications()->latest()->take(4)->get()
+        $notifications = $user->notifications()->where('read_at', '=', null)->latest()->take(4)->get()
             ->map(function ($notification) {
                 return [
                     'id' => $notification->id,
                     'title' => $notification->data['title'] ?? 'Notification',
                     'message' => $notification->data['message'] ?? 'No message available',
-                    'href' => $notification->data['url'] ?? '#',
                     'time' => $notification->created_at->diffForHumans(),
-                    'unread' => is_null($notification->read_at),
                 ];
             });
 
