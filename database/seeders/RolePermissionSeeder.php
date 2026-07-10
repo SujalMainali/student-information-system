@@ -85,8 +85,6 @@ class RolePermissionSeeder extends Seeder
                 'courses.update',
                 'courses.delete',
                 'courses.enroll',
-                'enrollment-requests.create',
-                'enrollment-requests.view-own',
                 'enrollment-requests.view-all',
                 'enrollment-requests.approve',
                 'enrollment-requests.reject',
