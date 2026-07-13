@@ -60,6 +60,7 @@ class EnrollRequestNotification extends Notification
             'message' => $this->enrollmentRequest->student->name
                 . ' requested enrollment for '
                 . $this->enrollmentRequest->course->name,
+            //TODO: Add enrollment show page here
             'url' => route('dashboard'),
             'type' => 'enrollment_request',
         ];

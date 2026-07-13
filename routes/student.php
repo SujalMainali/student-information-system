@@ -4,9 +4,9 @@ use App\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('permission:students.view')->group(function () {
-    Route::get('/students', [StudentController::class, 'index'])->name('students.index');
-    Route::get('/students/{student}', [StudentController::class, 'show'])->name('students.show');
-    Route::get('/students/{student}/courses', [StudentController::class, 'courses'])->name('students.courses');
+    Route::get('/students', [StudentController::class, 'index'])->name('index');
+    Route::get('/students/{student}', [StudentController::class, 'show'])->name('show');
+    Route::get('/students/{student}/courses', [StudentController::class, 'courses'])->name('courses');
 });
 
 Route::middleware('permission:students.assign-courses')->group(function () {
@@ -14,13 +14,13 @@ Route::middleware('permission:students.assign-courses')->group(function () {
 });
 
 Route::middleware('permission:students.create')->group(function () {
-    Route::get('/students/create', [StudentController::class, 'create'])->name('students.create');
-    Route::post('/students', [StudentController::class, 'store'])->name('students.store');
+    Route::get('/students/create', [StudentController::class, 'create'])->name('create');
+    Route::post('/students', [StudentController::class, 'store'])->name('store');
 });
 
 Route::middleware('permission:students.update')->group(function () {
-    Route::get('/students/{student}/edit', [StudentController::class, 'edit'])->name('students.edit');
-    Route::put('/students/{student}', [StudentController::class, 'update'])->name('students.update');
+    Route::get('/students/{student}/edit', [StudentController::class, 'edit'])->name('edit');
+    Route::put('/students/{student}', [StudentController::class, 'update'])->name('update');
 });
 
 Route::middleware('permission:students.delete')->group(function () {
