@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\DashboardService;
+use App\Models\User;
 
 use Illuminate\Http\Request;
 
@@ -17,9 +18,9 @@ class DashboardController extends Controller
         $user = auth()->user();
 
         $dashboard = match ($user->role) {
-            'admin' => $this->dashboardService->getAdminDashboard($user),
-            'staff' => $this->dashboardService->getStaffDashboard($user),
-            'student' => $this->dashboardService->getStudentDashboard($user),
+            User::ROLE_ADMIN => $this->dashboardService->getAdminDashboard($user),
+            User::ROLE_STAFF => $this->dashboardService->getStaffDashboard($user),
+            User::ROLE_STUDENT => $this->dashboardService->getStudentDashboard($user),
             default => [],
         };
 

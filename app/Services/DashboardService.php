@@ -52,7 +52,7 @@ class DashboardService
         $student = $user->student;
 
         if (!$student) {
-
+            
             $data += [
                 'enrolledCourses' => 0,
                 'currentCredits' => 0,
@@ -76,7 +76,7 @@ class DashboardService
 
             'upcomingExams' => 0,
 
-            'pendingRequests' => 0,
+            'pendingRequests' => $student->enrollmentRequests()->where('status', 'pending')->count(),
 
         ];
 

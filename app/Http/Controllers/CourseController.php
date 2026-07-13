@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
-
 use App\Http\Requests\Course\CreateRequest;
 use App\Models\Course;
 use App\Http\Resources\CourseResource;
 use App\Jobs\SendEnrollNotifications;
 use App\Services\CourseService;
+use App\Exceptions\UserAlreadyEnrolledException;
 
 class CourseController extends Controller
 {
@@ -138,28 +136,7 @@ class CourseController extends Controller
 
     public function enroll(Course $course)
     {
-        $user = auth()->user();
-
-        $user_courses = $user->student->courses()->pluck('courses.id')->toArray();
-
-        if (in_array($course->id, $user_courses)) {
-            if(request()->expectsJson()) {
-                return response()->json([
-                    'message' => 'You are already enrolled in this course.',
-                ], 400);
-            }
-
-            return redirect()
-                ->route('course.show', $course)
-                ->with('error', 'You are already enrolled in this course.');
-        }
-
-        $enrollRequest = $user->student->enrollmentRequests()->create([
-            'course_id' => $course->id,
-            'status' => 'pending',
-        ]);
-
-        SendEnrollNotifications::dispatch($enrollRequest);
+        $this->courseService->enroll($course);
 
         if(request()->expectsJson()) {
             return response()->json([

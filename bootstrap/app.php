@@ -1,5 +1,7 @@
 <?php
 
+use App\Exceptions\UserAlreadyEnrolledException;
+
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -52,4 +54,16 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*'),
         );
+
+        $exceptions->render(function (UserAlreadyEnrolledException $e, Request $request) {
+            if ($request->expectsJson()) {
+                return response()->json($e->responsePayload(), $e->status());
+            }
+
+            return response()->view('errors.enrollment', [
+                'message' => $e->getMessage(),
+                'errorCode' => $e->errorCode(),
+                'status' => $e->status(),
+            ]);
+        });
     })->create();

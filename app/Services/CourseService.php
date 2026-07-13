@@ -6,6 +6,8 @@ use App\Models\User;
 use App\Models\Student;
 use App\Models\Course;
 use App\Http\Requests\Course\CreateRequest;
+use App\Exceptions\UserAlreadyEnrolledException;
+use App\Jobs\SendEnrollNotifications;
 
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
@@ -128,5 +130,26 @@ class CourseService
             }
             $course->delete();
         });
+    }
+
+    public function enroll(Course $course) : void
+    {
+        $user = auth()->user();
+
+        $user_courses = $user->student->courses()->pluck('courses.id')->toArray();
+        $user_enrollment_requests = $user->student->enrollmentRequests()->pluck('course_id')->toArray();
+
+        if (in_array($course->id, $user_courses) || in_array($course->id, $user_enrollment_requests)) {
+            throw new UserAlreadyEnrolledException();
+        }
+        
+        $enrollRequest = $user->student->enrollmentRequests()->create([
+            'course_id' => $course->id,
+            'status' => 'pending',
+        ]);
+
+        SendEnrollNotifications::dispatch($enrollRequest);
+
+        return;
     }
 }
