@@ -2,8 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\User;
-use App\Models\Student;
 use App\Models\Course;
 use App\Http\Requests\Course\CreateRequest;
 use App\Exceptions\UserAlreadyEnrolledException;
@@ -12,6 +10,7 @@ use App\Jobs\SendEnrollNotifications;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class CourseService
 {
@@ -56,8 +55,8 @@ class CourseService
             }
             return $course;
         });
+    Log::info('Course created successfully.', ['course_id' => $course->id, 'course_name' => $course->name]);
     return $course;
-    
     }
 
     public function show(int $course) : array
@@ -115,12 +114,13 @@ class CourseService
 
             return $course;
         });
-
+        Log::info('Course updated successfully.', ['course_id' => $course->id, 'new_course_name' => $course->name]);
         return $course;
     }
 
     public function destroy(Course $course) : void
     {
+        Log::info('Attempting to delete course.', ['course_id' => $course->id, 'course_name' => $course->name]);
         DB::transaction(function () use ($course) {
             // Delete the associated course documents if they exist
             if ($course->courseDocuments()->exists()) {
@@ -130,6 +130,7 @@ class CourseService
             }
             $course->delete();
         });
+        Log::info('Course deleted successfully.');
     }
 
     public function enroll(Course $course) : void
@@ -140,6 +141,10 @@ class CourseService
         $user_enrollment_requests = $user->student->enrollmentRequests()->pluck('course_id')->toArray();
 
         if (in_array($course->id, $user_courses) || in_array($course->id, $user_enrollment_requests)) {
+            Log::channel('enrollment')->warning('User tried to enroll in a course they are already enrolled in.', [
+                'user_id' => auth()->id(),
+                'course_id' => request()->route('course')->id ?? null,
+            ]);
             throw new UserAlreadyEnrolledException();
         }
         
@@ -149,7 +154,10 @@ class CourseService
         ]);
 
         SendEnrollNotifications::dispatch($enrollRequest);
-
+        Log::channel('enrollment')->info('Enrollment request created.', [
+            'user_id' => auth()->id(),
+            'course_id' => request()->route('course')->id ?? null,
+        ]);
         return;
     }
 }
