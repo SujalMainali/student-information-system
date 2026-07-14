@@ -30,6 +30,7 @@ class RolePermissionSeeder extends Seeder
             'students.update',
             'students.delete',
             'students.assign-courses',
+            'students.restore',
 
             // Courses
             'courses.view',
@@ -80,6 +81,7 @@ class RolePermissionSeeder extends Seeder
                 'students.update',
                 'students.delete',
                 'students.assign-courses',
+                'students.restore',
                 'courses.view',
                 'courses.create',
                 'courses.update',

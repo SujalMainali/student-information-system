@@ -81,7 +81,7 @@
             form="delete-student-form"
             class="inline-flex items-center justify-center rounded-xl border border-rose-200 bg-rose-50 px-5 py-3 text-sm font-semibold text-rose-700 transition hover:border-rose-300 hover:bg-rose-100"
         >
-            Delete
+            Archieve
         </button>
     @endif
 </div>

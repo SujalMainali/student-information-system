@@ -5,15 +5,32 @@
 @section('content')
     <div class="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
         <div>
-            <a href="{{ route('manage') }}" class="text-sm font-semibold text-amber-700 hover:text-amber-900">&larr; Dashboard</a>
-            <h1 class="mt-3 text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">Students</h1>
-            <p class="mt-2 text-slate-600">A simple, searchable-feeling home for learner records.</p>
+            <a href="{{ route('manage') }}"
+                class="text-sm font-semibold text-amber-700 hover:text-amber-900">
+                &larr; Dashboard
+            </a>
+
+            <h1 class="mt-3 text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">
+                Students
+            </h1>
+
+            <p class="mt-2 text-slate-600">
+                A simple, searchable-feeling home for learner records.
+            </p>
         </div>
 
-        <a href="{{ route('student.create') }}" class="inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-amber-200 transition hover:bg-amber-600">
-            <span class="text-lg leading-none">+</span>
-            Add student
-        </a>
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <a href="{{ route('student.trashed') }}"
+                class="inline-flex items-center justify-center gap-2 rounded-xl border border-amber-300 bg-white px-5 py-3 text-sm font-semibold text-amber-700 transition hover:bg-amber-50">
+                View Trashed
+            </a>
+
+            <a href="{{ route('student.create') }}"
+                class="inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-amber-200 transition hover:bg-amber-600">
+                <span class="text-lg leading-none">+</span>
+                Add Student
+            </a>
+        </div>
     </div>
 
     <div class="mt-8 space-y-3">

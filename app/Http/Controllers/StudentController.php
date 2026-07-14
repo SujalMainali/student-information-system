@@ -7,9 +7,11 @@ use App\Http\Requests\Student\UpdateCourseRequest;
 use App\Models\Course;
 use App\Models\Student;
 use App\Http\Resources\StudentResource;
+
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class StudentController extends Controller
 {
@@ -179,13 +181,8 @@ class StudentController extends Controller
      */
     public function destroy(Student $student)
     {
-        Gate::authorize('delete', $student);
-
         DB::transaction(function () use ($student) {
-            // Delete the associated profile image if it exists
-            if ($student->profile_image) {
-                Storage::disk('public')->delete($student->profile_image);
-            }
+            $student->user->roles()->detach(); // Detach all roles associated with the user
             $student->delete();
         });
 
@@ -196,6 +193,70 @@ class StudentController extends Controller
         return redirect()
             ->route('student.index')
             ->with('success', 'Student deleted successfully.');
+    }
+
+    public function forceDestroy(Student $student)
+    {
+        Log::info('Force deleting student with ID: ' . $student->id);
+        DB::transaction(function () use ($student) {
+            if ($student->profile_image) {
+                Storage::disk('public')->delete($student->profile_image);
+            }
+            $student->forceDelete();
+        });
+
+        if(request()->expectsJson()) {
+            return response()->noContent();
+        }
+
+        return redirect()
+            ->route('dashboard')
+            ->with('success', 'Student permanently deleted successfully.');
+    }
+
+    public function restore(Student $student)
+    {
+        DB::transaction(function () use ($student) {
+            $student->restore();
+            $student->user->assignRole('student'); // Reassign the "student" role to the user
+        });
+
+        if(request()->expectsJson()) {
+            return response()->json([
+                'message' => 'Student restored successfully.',
+                'data' => new StudentResource($student),
+            ], 200);
+        }
+
+        return redirect()
+            ->route('student.show', $student)
+            ->with('success', 'Student restored successfully.');
+    }
+
+    public function trashed()
+    {
+        $trashedStudents = Student::onlyTrashed()
+            ->select(['id', 'name', 'email', 'dob'])
+            ->orderBy('id')
+            ->with([
+                'user' => fn ($query) => $query
+                    ->select('id', 'name', 'email')
+                    ->with(['image' => fn ($query) => $query->select('id', 'image_path', 'imageable_id')]),
+            ])
+            ->paginate(self::PAGE_SIZE);
+
+        if ($trashedStudents->currentPage() > $trashedStudents->lastPage()) {
+            return redirect()->route('student.trashed');
+        }
+
+        if(request()->expectsJson()) {
+            return response()->json([
+                'message' => 'Trashed students retrieved successfully.',
+                'data' => StudentResource::collection($trashedStudents),
+            ], 200);
+        }
+
+        return view('students.trashed', ['trashedStudents' => $trashedStudents]);
     }
 
     /**

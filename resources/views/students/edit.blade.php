@@ -34,7 +34,7 @@
 
             <form
                 id="delete-student-form"
-                action="{{ route('student.destroy', $student) }}"
+                action="{{ route('student.archieve', $student) }}"
                 method="POST"
                 onsubmit="return confirm('Delete this student? This action cannot be undone.')"
             >

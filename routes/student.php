@@ -3,6 +3,11 @@
 use App\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Route;
 
+Route::middleware('permission:students.restore')->group(function () {
+    Route::patch('/students/{student}/restore', [StudentController::class, 'restore'])->withTrashed()->name('restore');
+    Route::get('/students/trashed', [StudentController::class, 'trashed'])->name('trashed');
+});
+
 Route::middleware('permission:students.view')->group(function () {
     Route::get('/students', [StudentController::class, 'index'])->name('index');
     Route::get('/students/{student}', [StudentController::class, 'show'])->name('show');
@@ -24,5 +29,6 @@ Route::middleware('permission:students.update')->group(function () {
 });
 
 Route::middleware('permission:students.delete')->group(function () {
-    Route::delete('/students/{student}', [StudentController::class, 'destroy'])->name('students.destroy');
+    Route::delete('/students/{student}', [StudentController::class, 'destroy'])->name('archieve');
+    Route::delete('/students/{student}/force', [StudentController::class, 'forceDestroy'])->withTrashed()->name('force-destroy');
 });

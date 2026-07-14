@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\Visible;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 use App\Models\CourseDocument;
 use App\Models\EnrollmentRequest;
@@ -21,7 +22,7 @@ use App\Models\EnrollmentRequest;
 class Course extends Model
 {
     /** @use HasFactory<CourseFactory> */
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     public function students(): BelongsToMany
     {
