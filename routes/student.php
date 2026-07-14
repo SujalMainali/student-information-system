@@ -8,6 +8,11 @@ Route::middleware('permission:students.restore')->group(function () {
     Route::get('/students/trashed', [StudentController::class, 'trashed'])->name('trashed');
 });
 
+Route::middleware('permission:students.create')->group(function () {
+    Route::get('/students/create', [StudentController::class, 'create'])->name('create');
+    Route::post('/students', [StudentController::class, 'store'])->name('store');
+});
+
 Route::middleware('permission:students.view')->group(function () {
     Route::get('/students', [StudentController::class, 'index'])->name('index');
     Route::get('/students/{student}', [StudentController::class, 'show'])->name('show');
@@ -16,11 +21,6 @@ Route::middleware('permission:students.view')->group(function () {
 
 Route::middleware('permission:students.assign-courses')->group(function () {
     Route::patch('/students/{student}/courses', [StudentController::class, 'updateCourses'])->middleware('permission:students.assign-courses')->name('courses.update');
-});
-
-Route::middleware('permission:students.create')->group(function () {
-    Route::get('/students/create', [StudentController::class, 'create'])->name('create');
-    Route::post('/students', [StudentController::class, 'store'])->name('store');
 });
 
 Route::middleware('permission:students.update')->group(function () {
