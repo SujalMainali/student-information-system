@@ -9,12 +9,20 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Support\Str;
 
 class Student extends Model
 {
     /** @use HasFactory<StudentFactory> */
     use HasFactory, SoftDeletes;
 
+    protected $visible = [
+        'name',
+        'email',
+        'dob',
+        'avatar_url',
+    ];
     protected $fillable = [
         'name',
         'email',
@@ -32,6 +40,35 @@ class Student extends Model
         return [
             'dob' => 'date',
         ];
+    }
+
+    protected function name(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => Str::title($value),
+            set: fn ($value) => Str::lower(trim($value)),
+        );
+    }
+
+    protected function email(): Attribute
+    {
+        return Attribute::make(
+            set: fn (string $value) => Str::lower(trim($value)),
+        );
+    }
+
+    protected function age(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->dob ? now()->diffInYears($this->dob) : null,
+        );
+    }
+
+    protected function avatarUrl(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->user?->avatar_url ?? null,
+        );
     }
 
     public function courses(): BelongsToMany

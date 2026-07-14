@@ -11,7 +11,7 @@
                 <div class="absolute right-0 top-0 size-64 rounded-full bg-amber-400/10 blur-3xl"></div>
 
                 <div class="relative flex flex-col gap-7 sm:flex-row sm:items-center">
-                    <x-student-avatar :image="$student->user?->image?->image_path" size="xl" class="ring-white/20" />
+                    <x-student-avatar :image_url="$student->avatar_url" size="xl" class="ring-white/20" />
 
                     <div class="min-w-0 text-white">
                         <p class="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">Student #{{ $student->id }}</p>

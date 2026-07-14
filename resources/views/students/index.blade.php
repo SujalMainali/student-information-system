@@ -42,7 +42,7 @@
                 :view-url="route('student.show', $student)"
             >
                 <x-slot:leading>
-                    <x-student-avatar :image="$student->user?->image?->image_path" size="sm" />
+                    <x-student-avatar :image_url="$student->avatar_url" size="sm" />
                 </x-slot:leading>
 
                 <x-slot:meta>

@@ -25,11 +25,7 @@ class StudentController extends Controller
         $students = Student::query()
             ->select(['id', 'name', 'email', 'dob'])
             ->orderBy('id')
-            ->with([
-                'user' => fn ($query) => $query
-                    ->select('id', 'name', 'email')
-                    ->with(['image' => fn ($query) => $query->select('id', 'image_path', 'imageable_id')]),
-            ])
+            ->with('user')
             ->paginate(self::PAGE_SIZE);
 
         if ($students->currentPage() > $students->lastPage()) {
@@ -102,11 +98,9 @@ class StudentController extends Controller
             'courses' => fn ($query) => $query
                 ->select('courses.id', 'courses.name', 'courses.credits')
                 ->orderBy('courses.name'),
-            'user' => fn ($query) => $query
-                ->select('id', 'name', 'email')
-                ->with(['image' => fn ($query) => $query->select('id', 'image_path', 'imageable_id')]),
+            'user'
         ]);
-
+        Log::info('Student retrieved: ' . $student->id . 'image URL: ' . $student->avatar_url);
         if(request()->expectsJson()) {
             return response()->json([
                 'message' => 'Student retrieved successfully.',

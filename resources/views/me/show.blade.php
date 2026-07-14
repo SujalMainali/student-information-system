@@ -12,9 +12,9 @@
 
                 <div class="relative flex flex-col gap-7 sm:flex-row sm:items-center">
                     <div class="grid size-36 shrink-0 place-items-center overflow-hidden rounded-[2rem] border-4 border-white bg-slate-100 text-slate-400 shadow-md ring-1 ring-white/20">
-                        @if ($user->image?->image_path)
+                        @if ($user->avatar_url)
                             <img
-                                src="{{ Storage::disk('public')->url($user->image->image_path) }}"
+                                src="{{ $user->avatar_url }}"
                                 alt="{{ $user->name }} profile image"
                                 class="size-full object-cover"
                             >

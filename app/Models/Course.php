@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Attributes\Visible;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Support\Str;
 
 use App\Models\CourseDocument;
 use App\Models\EnrollmentRequest;
@@ -24,6 +26,14 @@ class Course extends Model
     /** @use HasFactory<CourseFactory> */
     use HasFactory, SoftDeletes;
 
+    protected function name(): Attribute
+    {
+        return Attribute::make(
+            set: fn (string $value) => Str::title(
+                preg_replace('/\s+/', ' ', trim($value))
+            ),
+        );
+    }
     public function students(): BelongsToMany
     {
         return $this->belongsToMany(Student::class)
